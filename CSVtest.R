@@ -110,7 +110,6 @@ for(i in names(sony)){
                         'MusicPubs',
                         'Blogs',
                         'Online',
-                        'Primary',
                         'BigFan',
                         'Hotel',
                         'Cruise',
@@ -360,6 +359,24 @@ for(i in names(sony)){
         label = i
       )
       fail <- rbind(fail,newfail)
+    }
+  }else if(bundle == 'Primary'){
+    if(name == 'Language'){
+      if(!('English' %in% sony[[i]] |
+        'Spanish' %in% sony[[i]] |
+        'Other' %in% sony[[i]])){
+        newfail <- data.frame(
+          label = i
+        )
+        fail <- rbind(fail,newfail)
+      }
+    }else{
+      if(!("True" %in% sony[[i]] | "False" %in% sony[[i]])){
+        newfail <- data.frame(
+          label = i
+        )
+        fail <- rbind(fail,newfail)
+      }
     }
   }else{
     newbundleRow <- data.frame(
