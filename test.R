@@ -79,6 +79,7 @@ for(i in names(sony)){
                         'Airline',
                         'ActiveWear',
                         'MusicTV',
+                        'MusicDiscovery',
                         'PremiumTV',
                         'PaidStreaming',
                         'CableTV',
@@ -105,7 +106,11 @@ for(i in names(sony)){
                         'Sports',
                         'Awards',
                         'Live',
-                        'Genre'
+                        'Genre',
+                        'KidsHousehold',
+                        'ArtistMerch',
+                        'Purchased',
+                        'Consumption'
   )){
     if(!("True" %in% sony[[i]] | "False" %in% sony[[i]])){
       fail[length(fail) + 1] <- i
@@ -222,6 +227,78 @@ for(i in names(sony)){
     if(!('No, I dislike it' %in% sony[[i]] |
   'Yes, I like it' %in% sony[[i]] |
   'Neither like nor dislike' %in% sony[[i]])){
+      fail[length(fail) + 1] <- i
+    }
+  }else if(i == 'Living_In_US'){
+    if(!('Less than 1 year' %in% sony[[i]] |
+    '10+ years' %in% sony[[i]] |
+    'Prefer not to answer' %in% sony[[i]] |
+    'Born here' %in% sony[[i]] |
+    '5 to 10 years' %in% sony[[i]] |
+    '1 to 5 years' %in% sony[[i]])){
+      fail[length(fail) + 1] <- i
+    }
+  }else if(bundle == 'Attitude'){
+    if(!('Neither Agree Nor Disagree' %in% sony[[i]] |
+'Tend to Disagree' %in% sony[[i]] |
+'Strongly Disagree' %in% sony[[i]] |
+'Tend to Agree' %in% sony[[i]] |
+'Strongly Agree' %in% sony[[i]])){
+      fail[length(fail) + 1] <- i
+    }
+  }else if(i == 'State'){
+    if(!('Idaho' %in% sony[[i]] |
+      'California' %in% sony[[i]] |
+      'Rhode Island' %in% sony[[i]] |
+      'Minnesota' %in% sony[[i]] |
+      'New Jersey' %in% sony[[i]] |
+      'Wyoming' %in% sony[[i]] |
+      'Utah' %in% sony[[i]] |
+      'New Mexico' %in% sony[[i]] |
+      'Michigan' %in% sony[[i]] |
+      'Mississippi' %in% sony[[i]] |
+      'Hawaii' %in% sony[[i]] |
+      'Kansas' %in% sony[[i]] |
+      'Louisiana' %in% sony[[i]] |
+      'Nebraska' %in% sony[[i]] |
+      'North Dakota' %in% sony[[i]] |
+      'Georgia' %in% sony[[i]] |
+      'New Hampshire' %in% sony[[i]] |
+      'Pennsylvania' %in% sony[[i]] |
+      'South Carolina' %in% sony[[i]] |
+      'Washington' %in% sony[[i]] |
+      'Wisconsin' %in% sony[[i]] |
+      'Florida' %in% sony[[i]] |
+      'Oregon' %in% sony[[i]] |
+      'West Virginia' %in% sony[[i]] |
+      'Washington, D.C' %in% sony[[i]] |
+      'Arizona' %in% sony[[i]] |
+      'Ohio' %in% sony[[i]] |
+      'Rhode Island' %in% sony[[i]] |
+      'Delaware' %in% sony[[i]] |
+      'Illinois' %in% sony[[i]] |
+      'Oklahoma' %in% sony[[i]] |
+      'Tennessee' %in% sony[[i]] |
+      'South Dakota' %in% sony[[i]] |
+      'Indiana' %in% sony[[i]] |
+      'Maine' %in% sony[[i]] |
+      'Colorado' %in% sony[[i]] |
+      'Massachusetts' %in% sony[[i]] |
+      'Connecticut' %in% sony[[i]] |
+      'Kentucky' %in% sony[[i]] |
+      'Arkansas' %in% sony[[i]] |
+      'Alaska' %in% sony[[i]] |
+      'Vermont' %in% sony[[i]] |
+      'Iowa' %in% sony[[i]] |
+      'Nevada' %in% sony[[i]] |
+      'Montana' %in% sony[[i]] |
+      'Maryland' %in% sony[[i]] |
+      'Virginia' %in% sony[[i]] |
+      'Missouri' %in% sony[[i]] |
+      'New York' %in% sony[[i]] |
+      'Texas' %in% sony[[i]] |
+      'North Carolina' %in% sony[[i]] |
+      'Alabama' %in% sony[[i]])){
       fail[length(fail) + 1] <- i
     }
   }else{
