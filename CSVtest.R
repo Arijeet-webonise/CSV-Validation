@@ -1,10 +1,11 @@
-print ("hi")
+print ("Scanning")
 sony <- read.csv("/var/www/sony-report/import/sony2.csv", header=TRUE)
 print(is.data.frame(sony))
 print(ncol(sony))
 print(nrow(sony))
 
-fail <- list("Failed Labels")
+fail <- data.frame()
+newbundle <- data.frame()
 
 for(i in names(sony)){
   bundle <- substring(i, 0, regexpr("_",i)-1)
@@ -12,11 +13,17 @@ for(i in names(sony)){
 
   if(i == "Single_Age"){
     if(class(sony[[i]]) != "integer"){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(i == "Gender"){
     if(!("Male" %in% sony[[i]] | "Female" %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(bundle == "Household"){
     if(name == "Income"){
@@ -29,7 +36,9 @@ for(i in names(sony)){
            "More than $250,000" %in% sony[[i]] |
            "Between $25,000 and $44,000" %in% sony[[i]] |
            "Prefer not to say" %in% sony[[i]])){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     } else if(name == "Makeup") {
       if(!(
@@ -43,11 +52,15 @@ for(i in names(sony)){
         "I live with my partner, but we don't have any kids" %in% sony[[i]]|
         "Other" %in% sony[[i]]
       )){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     } else {
       if(!("True" %in% sony[[i]] | "False" %in% sony[[i]])){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     }
   }
@@ -113,16 +126,24 @@ for(i in names(sony)){
                         'Consumption'
   )){
     if(!("True" %in% sony[[i]] | "False" %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   } else if(i == 'WEIGHT'){
     if(class(sony[[i]]) != "numeric"){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(bundle == 'FECI'){
     if(name == 'Score'){
       if(class(sony[[i]]) != "integer"){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     }else if(name == 'GROUP'){
       if(
@@ -132,7 +153,9 @@ for(i in names(sony)){
           "Fanatic" %in% sony[[i]]
         )
       ){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     }
   }else if(i == 'Sexual_Orientation'){
@@ -144,26 +167,38 @@ for(i in names(sony)){
       'Transgender' %in% sony[[i]] |
       'Bisexual' %in% sony[[i]]
 ){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(bundle %in% c("Latino", "Country")){
     if(!("Selected" %in% sony[[i]] | "Not Selected" %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(bundle == 'Latin'){
     if(name == 'Ethnicity'){
       if(class(sony[[i]]) != "integer"){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     }else{
       if(!("True" %in% sony[[i]] | "False" %in% sony[[i]])){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     }
   }else if(bundle=="Race"){
     if(!(name %in% c('Detailed','Simple'))){
       if(!("True" %in% sony[[i]] | "False" %in% sony[[i]])){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     }
   }else if(bundle == 'Occupation'){
@@ -176,7 +211,9 @@ for(i in names(sony)){
       'Full time student' %in% sony[[i]] |
       'Working full time' %in% sony[[i]]
       )){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
   }else if(bundle == 'Age'){
     if(name == 'Cohorts'){
@@ -191,7 +228,9 @@ for(i in names(sony)){
       '30-34' %in% sony[[i]] |
       '40-44' %in% sony[[i]] |
       '45-49' %in% sony[[i]])){
-        fail[length(fail) + 1] <- i
+        newfail <- data.frame(
+          label = i
+        )
       }
     }else if(name == 'by_Gender'){
       if(!('60+' %in% sony[[i]] |
@@ -205,10 +244,16 @@ for(i in names(sony)){
         '30-34' %in% sony[[i]] |
         '40-44' %in% sony[[i]] |
         '45-49' %in% sony[[i]])){
-          fail[length(fail) + 1] <- i
+          newfail <- data.frame(
+            label = i
+          )
         }
     }else{
-      print(i)
+      newbundleRow <- data.frame(
+        New_Labels = i
+      )
+
+      newbundle <- rbind(newbundle,newbundleRow)
     }
   }else if(i == 'Political_Affiliation'){
     if(!('Democratic' %in% sony[[i]] |
@@ -221,13 +266,19 @@ for(i in names(sony)){
     'Republican' %in% sony[[i]] |
     'Prefer not to answer' %in% sony[[i]] |
     'Libertarian' %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(bundle == 'Tactic'){
     if(!('No, I dislike it' %in% sony[[i]] |
   'Yes, I like it' %in% sony[[i]] |
   'Neither like nor dislike' %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(i == 'Living_In_US'){
     if(!('Less than 1 year' %in% sony[[i]] |
@@ -236,7 +287,10 @@ for(i in names(sony)){
     'Born here' %in% sony[[i]] |
     '5 to 10 years' %in% sony[[i]] |
     '1 to 5 years' %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(bundle == 'Attitude'){
     if(!('Neither Agree Nor Disagree' %in% sony[[i]] |
@@ -244,7 +298,10 @@ for(i in names(sony)){
 'Strongly Disagree' %in% sony[[i]] |
 'Tend to Agree' %in% sony[[i]] |
 'Strongly Agree' %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else if(i == 'State'){
     if(!('Idaho' %in% sony[[i]] |
@@ -299,9 +356,19 @@ for(i in names(sony)){
       'Texas' %in% sony[[i]] |
       'North Carolina' %in% sony[[i]] |
       'Alabama' %in% sony[[i]])){
-      fail[length(fail) + 1] <- i
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
     }
   }else{
-    print(i)
+    newbundleRow <- data.frame(
+      New_Labels = i
+    )
+
+    newbundle <- rbind(newbundle,newbundleRow)
   }
 }
+
+write.csv(newbundle, file = "~/Desktop/CSV/newbundle.csv")
+write.csv(fail, file = "~/Desktop/CSV/incorrectbundle.csv")
