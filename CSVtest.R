@@ -40,6 +40,9 @@ if(!('Household_Makeup' %in% names(sony))){
 }
 
 for(i in names(sony)){
+  if(i %in% c("RespondentID", "OrderID", "ResStatus", "StartDate")){
+    next
+  }
   bundle <- substring(i, 0, regexpr("_",i)-1)
   name <- substring(i, regexpr("_",i)+1)
 
@@ -154,7 +157,11 @@ for(i in names(sony)){
                         'KidsHousehold',
                         'ArtistMerch',
                         'Purchased',
-                        'Consumption'
+                        'Consumption',
+                        'Mood',
+                        'Hobbies',
+                        'Bonus',
+                        'Devices'
   )){
     if(!("True" %in% sony[[i]] | "False" %in% sony[[i]])){
       newfail <- data.frame(
@@ -163,7 +170,7 @@ for(i in names(sony)){
       fail <- rbind(fail,newfail)
     }
 
-    if(i %in% oldlabels[['V1']]){
+    if(!(i %in% oldlabels[['V1']]) & !(bundle %in% c('KidsHousehold', 'Mood'))){
       newbundleRow <- data.frame(
         New_Labels = i
       )
@@ -193,6 +200,33 @@ for(i in names(sony)){
         )
         fail <- rbind(fail,newfail)
 
+      }
+    }else if(name == 'GROUP_AGE'){
+      if("Indifferents 50+" %in% sony[[i]] |
+"Indifferents 26-39" %in% sony[[i]] |
+"Casuals 35-49" %in% sony[[i]] |
+"Enthusiasts 13-17" %in% sony[[i]] |
+"Causals 18-25" %in% sony[[i]] |
+"Indifferents 40-49" %in% sony[[i]] |
+"Enthusiasts 50+" %in% sony[[i]] |
+"Fanatics 18-25" %in% sony[[i]] |
+"Fanatics 55+" %in% sony[[i]] |
+"Enthusiasts 30-39" %in% sony[[i]] |
+"Fanatics 26-34" %in% sony[[i]] |
+"Enthusiasts 18-21" %in% sony[[i]] |
+"Indifferents 13-25" %in% sony[[i]] |
+"Fanatics 35-44" %in% sony[[i]] |
+"Enthusiasts 22-29" %in% sony[[i]] |
+"Enthusiasts 40-49" %in% sony[[i]] |
+"Casuals 26-34" %in% sony[[i]] |
+"Casuals 13-17" %in% sony[[i]] |
+"Fanatics 45-54" %in% sony[[i]] |
+"Causals 50+" %in% sony[[i]] |
+"Fanatics 13-17" %in% sony[[i]]){
+        newfail <- data.frame(
+          label = i
+        )
+        fail <- rbind(fail,newfail)
       }
     }else if(name == 'GROUP'){
       if(
@@ -230,7 +264,7 @@ for(i in names(sony)){
       fail <- rbind(fail,newfail)
     }
   }else if(bundle %in% c("Latino", "Country")){
-    if(name == 'Filter'){
+    if(name == 'Filter' | name == 'filter'){
       if(!("Selected" %in% sony[[i]] | "Not Selected" %in% sony[[i]])){
         newfail <- data.frame(
           label = i
@@ -366,7 +400,6 @@ for(i in names(sony)){
       fail <- rbind(fail,newfail)
     }
   }else if(bundle == 'Attitude'){
-    if(name=='Brand_Sponsors'){
       if(!('Neither Agree Nor Disagree' %in% sony[[i]] |
   'Tend to Disagree' %in% sony[[i]] |
   'Strongly Disagree' %in% sony[[i]] |
@@ -377,13 +410,6 @@ for(i in names(sony)){
         )
         fail <- rbind(fail,newfail)
       }
-    }else{
-      newbundleRow <- data.frame(
-        New_Labels = i
-      )
-
-      newbundle <- rbind(newbundle,newbundleRow)
-    }
   }else if(i == 'State'){
     if(!('Idaho' %in% sony[[i]] |
       'California' %in% sony[[i]] |
