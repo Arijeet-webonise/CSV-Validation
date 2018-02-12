@@ -1,11 +1,43 @@
 print ("Scanning")
 sony <- read.csv("/var/www/sony-report/import/sony2.csv", header=TRUE)
+oldlabels <- read.csv("~/Documents/R_Project/sony/correct_spelling_list.csv", header = FALSE)
 print(is.data.frame(sony))
 print(ncol(sony))
 print(nrow(sony))
 
 fail <- data.frame()
 newbundle <- data.frame()
+
+if(!('Single_Age' %in% names(sony))){
+  newfail <- data.frame(
+    label = 'Single_Age'
+  )
+  fail <- rbind(fail,newfail)
+}
+if(!('Gender' %in% names(sony))){
+  newfail <- data.frame(
+    label = 'Gender'
+  )
+  fail <- rbind(fail,newfail)
+}
+if(!('State' %in% names(sony))){
+  newfail <- data.frame(
+    label = 'State'
+  )
+  fail <- rbind(fail,newfail)
+}
+if(!('Household_Income' %in% names(sony))){
+  newfail <- data.frame(
+    label = 'Household_Income'
+  )
+  fail <- rbind(fail,newfail)
+}
+if(!('Household_Makeup' %in% names(sony))){
+  newfail <- data.frame(
+    label = 'Household_Makeup'
+  )
+  fail <- rbind(fail,newfail)
+}
 
 for(i in names(sony)){
   bundle <- substring(i, 0, regexpr("_",i)-1)
@@ -130,6 +162,14 @@ for(i in names(sony)){
       )
       fail <- rbind(fail,newfail)
     }
+
+    if(i %in% oldlabels[['V1']]){
+      newbundleRow <- data.frame(
+        New_Labels = i
+      )
+
+      newbundle <- rbind(newbundle,newbundleRow)
+    }
   } else if(i == 'WEIGHT'){
     if(class(sony[[i]]) != "numeric"){
       newfail <- data.frame(
@@ -143,6 +183,16 @@ for(i in names(sony)){
         newfail <- data.frame(
           label = i
         )
+        fail <- rbind(fail,newfail)
+
+      }
+    }else if(name %in% c('GROUP_FINAL', 'COUNTRY_FINAL', 'HISPANIC_FINAL')){
+      if(class(sony[[i]]) == 'factor'){
+        newfail <- data.frame(
+          label = i
+        )
+        fail <- rbind(fail,newfail)
+
       }
     }else if(name == 'GROUP'){
       if(
@@ -155,7 +205,15 @@ for(i in names(sony)){
         newfail <- data.frame(
           label = i
         )
+        fail <- rbind(fail,newfail)
+
       }
+    }else{
+      newbundleRow <- data.frame(
+        New_Labels = i
+      )
+
+      newbundle <- rbind(newbundle,newbundleRow)
     }
   }else if(i == 'Sexual_Orientation'){
     if('None of the above' %in% sony[[i]] |
@@ -172,11 +230,19 @@ for(i in names(sony)){
       fail <- rbind(fail,newfail)
     }
   }else if(bundle %in% c("Latino", "Country")){
-    if(!("Selected" %in% sony[[i]] | "Not Selected" %in% sony[[i]])){
-      newfail <- data.frame(
-        label = i
+    if(name == 'Filter'){
+      if(!("Selected" %in% sony[[i]] | "Not Selected" %in% sony[[i]])){
+        newfail <- data.frame(
+          label = i
+        )
+        fail <- rbind(fail,newfail)
+      }
+    }else{
+      newbundleRow <- data.frame(
+        New_Labels = i
       )
-      fail <- rbind(fail,newfail)
+
+      newbundle <- rbind(newbundle,newbundleRow)
     }
   }else if(bundle == 'Latin'){
     if(name == 'Ethnicity'){
@@ -201,19 +267,27 @@ for(i in names(sony)){
       }
     }
   }else if(bundle == 'Occupation'){
-    if(!('Working part time' %in% sony[[i]] |
-      'Prefer not to answer' %in% sony[[i]] |
-      'Retired' %in% sony[[i]] |
-      'Other' %in% sony[[i]] |
-      'Currently looking for employment' %in% sony[[i]] |
-      'Part time student' %in% sony[[i]] |
-      'Full time student' %in% sony[[i]] |
-      'Working full time' %in% sony[[i]]
-      )){
-        newfail <- data.frame(
-          label = i
-        )
-      }
+    if(name == 'Status'){
+      if(!('Working part time' %in% sony[[i]] |
+        'Prefer not to answer' %in% sony[[i]] |
+        'Retired' %in% sony[[i]] |
+        'Other' %in% sony[[i]] |
+        'Currently looking for employment' %in% sony[[i]] |
+        'Part time student' %in% sony[[i]] |
+        'Full time student' %in% sony[[i]] |
+        'Working full time' %in% sony[[i]]
+        )){
+          newfail <- data.frame(
+            label = i
+          )
+        }
+    }else{
+      newbundleRow <- data.frame(
+        New_Labels = i
+      )
+
+      newbundle <- rbind(newbundle,newbundleRow)
+    }
   }else if(bundle == 'Age'){
     if(name == 'Cohorts'){
       if(!('60+' %in% sony[[i]] |
@@ -292,15 +366,23 @@ for(i in names(sony)){
       fail <- rbind(fail,newfail)
     }
   }else if(bundle == 'Attitude'){
-    if(!('Neither Agree Nor Disagree' %in% sony[[i]] |
-'Tend to Disagree' %in% sony[[i]] |
-'Strongly Disagree' %in% sony[[i]] |
-'Tend to Agree' %in% sony[[i]] |
-'Strongly Agree' %in% sony[[i]])){
-      newfail <- data.frame(
-        label = i
+    if(name=='Brand_Sponsors'){
+      if(!('Neither Agree Nor Disagree' %in% sony[[i]] |
+  'Tend to Disagree' %in% sony[[i]] |
+  'Strongly Disagree' %in% sony[[i]] |
+  'Tend to Agree' %in% sony[[i]] |
+  'Strongly Agree' %in% sony[[i]])){
+        newfail <- data.frame(
+          label = i
+        )
+        fail <- rbind(fail,newfail)
+      }
+    }else{
+      newbundleRow <- data.frame(
+        New_Labels = i
       )
-      fail <- rbind(fail,newfail)
+
+      newbundle <- rbind(newbundle,newbundleRow)
     }
   }else if(i == 'State'){
     if(!('Idaho' %in% sony[[i]] |
@@ -378,6 +460,15 @@ for(i in names(sony)){
         fail <- rbind(fail,newfail)
       }
     }
+  }else if(bundle == 'Hours'){
+    if(!(class(sony[[i]]) == 'numeric' | class(sony[[i]]) == 'integer')){
+      newfail <- data.frame(
+        label = i
+      )
+      fail <- rbind(fail,newfail)
+    }
+  }else if(bundle == 'Spend'){
+
   }else{
     newbundleRow <- data.frame(
       New_Labels = i
